@@ -1,15 +1,15 @@
 package com.br.gsistemas.conexao.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "chat_messages")
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChatMessage {
 
     @Id
@@ -26,4 +26,5 @@ public class ChatMessage {
 
     private String mensagem;
     private LocalDateTime timestamp;
+
 }

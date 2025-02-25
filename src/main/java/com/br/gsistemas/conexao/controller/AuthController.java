@@ -7,10 +7,16 @@ import com.br.gsistemas.conexao.enums.UserType;
 import com.br.gsistemas.conexao.repository.UserRepository;
 import com.br.gsistemas.conexao.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -25,12 +31,32 @@ public class AuthController {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final AuthenticationManager authenticationManager;
+
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequest) {
-        String token = authService.autenticarUsuario(loginRequest);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto request) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha())
+            );
+
+            User user = userRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+            String token = jwtUtil.gerarToken(user.getEmail());
+
+            // 🔹 Retornando um JSON em vez de apenas uma string
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("tipoUsuario", user.getTipo().name());
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "Credenciais inválidas"));
+        }
     }
 
     @PostMapping("/cadastrar")

@@ -2,8 +2,7 @@ package com.br.gsistemas.conexao.domain;
 
 import com.br.gsistemas.conexao.enums.TripStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,8 +10,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "trips")
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Trip {
 
     @Id
@@ -32,6 +32,7 @@ public class Trip {
     private String detalhes; // Exemplo: "Levo encomendas"
 
     private String carro;
+    private String motoristaEmail;
 
     @Enumerated(EnumType.STRING)
     private TripStatus status; // DISPONÍVEL, LOTADO, FINALIZADO

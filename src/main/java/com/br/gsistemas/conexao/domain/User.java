@@ -11,13 +11,12 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
+@Data
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long usuarioId;
 
     @NotBlank(message = "O nome é obrigatório")
     private String nome;
@@ -36,6 +35,10 @@ public class User {
     private UserType tipo; // MOTORISTA ou PASSAGEIRO
 
     public User(Long id){
-        this.id = id;
+        this.usuarioId = id;
+    }
+
+    public User(){
+
     }
 }
