@@ -25,6 +25,7 @@ public class Trip {
 
     private String origem;
     private String destino;
+    @Column(nullable = false)
     private LocalDateTime horario;
     private Double preco;
     private String formaPagamento; // PIX, Dinheiro
@@ -36,6 +37,10 @@ public class Trip {
 
     @Enumerated(EnumType.STRING)
     private TripStatus status; // DISPONÍVEL, LOTADO, FINALIZADO
+
+    private Long qtdVagas;
+
+    private String observacaoDinheiro;
 
     @ManyToMany
     @JoinTable(name = "trip_passengers",

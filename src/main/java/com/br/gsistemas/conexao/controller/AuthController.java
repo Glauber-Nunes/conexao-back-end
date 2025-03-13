@@ -47,7 +47,6 @@ public class AuthController {
 
             String token = jwtUtil.gerarToken(user.getEmail());
 
-            // 🔹 Retornando um JSON em vez de apenas uma string
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("tipoUsuario", user.getTipo().name());

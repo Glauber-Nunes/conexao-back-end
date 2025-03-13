@@ -2,6 +2,7 @@ package com.br.gsistemas.conexao.controller;
 
 import com.br.gsistemas.conexao.config.JwtUtil;
 import com.br.gsistemas.conexao.domain.Trip;
+import com.br.gsistemas.conexao.dto.TripDTO;
 import com.br.gsistemas.conexao.domain.User;
 import com.br.gsistemas.conexao.enums.TripStatus;
 import com.br.gsistemas.conexao.enums.UserType;
@@ -12,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +37,7 @@ public class TripController {
     // Listar viagens disponíveis
     @GetMapping("/disponiveis")
     public ResponseEntity<?> listarViagens(@RequestHeader("Authorization") String token) {
+
         if (token == null || !token.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token JWT não fornecido ou inválido.");
         }
@@ -60,11 +65,11 @@ public class TripController {
         }
 
         String email = jwtUtil.extrairEmail(token.replace("Bearer ", ""));
-        User usuario = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
 
-        Trip viagem = tripRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Viagem não encontrada!"));
+        User usuario = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
+
+        Trip viagem = tripRepository.findById(id).orElseThrow(() -> new RuntimeException("Viagem não encontrada!"));
+
 
         if (viagem.getPassageiros().contains(usuario)) {
             return ResponseEntity.badRequest().body("Você já está nesta viagem!");
@@ -92,6 +97,7 @@ public class TripController {
 
     @GetMapping("/{id}/detalhes")
     public ResponseEntity<?> detalhesViagem(@PathVariable Long id) {
+
         Trip viagem = tripRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Viagem não encontrada!"));
 
@@ -136,5 +142,67 @@ public class TripController {
         return ResponseEntity.ok("Você saiu da viagem!");
     }
 
+    @PostMapping("/cadastrar")
+    public ResponseEntity<?> cadastrarViagem(@RequestBody Trip viagem, @RequestHeader("Authorization") String token) {
+        System.out.println("🚀 Recebendo requisição para cadastrar viagem...");
 
+        if (token == null || !token.startsWith("Bearer ")) {
+            System.err.println("❌ Token JWT não fornecido ou inválido.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token JWT não fornecido ou inválido.");
+        }
+
+        String email = jwtUtil.extrairEmail(token.replace("Bearer ", ""));
+        System.out.println("📧 Email extraído do token: " + email);
+
+        User motorista = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Motorista não encontrado!"));
+
+        System.out.println("✅ Motorista encontrado: " + motorista.getNome());
+
+        // 🚀 Verificar a data antes de salvar
+        try {
+            System.out.println("📌 Data e hora recebida (String): " + viagem.getHorario());
+            viagem.setHorario(viagem.getHorario().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("America/Sao_Paulo")).toLocalDateTime());
+            System.out.println("✅ Data e hora convertida corretamente: " + viagem.getHorario());
+        } catch (Exception e) {
+            System.err.println("❌ Erro ao converter data: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao converter data: " + e.getMessage());
+        }
+
+        //  Configura a viagem
+        viagem.setMotorista(motorista);
+        viagem.setMotoristaEmail(motorista.getEmail());
+        viagem.setStatus(TripStatus.DISPONIVEL);
+        viagem.setObservacaoDinheiro("Em Especie esta trocado");
+
+        Trip viagemSalva = tripRepository.save(viagem);
+        System.out.println("✅ Viagem cadastrada com sucesso: " + viagemSalva.getId());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(viagemSalva);
+    }
+
+
+        /*
+        @PostMapping("/cadastrar")
+        public ResponseEntity<?> cadastrarViagem(@RequestBody Trip viagem, @RequestHeader("Authorization") String token) {
+            if (token == null || !token.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token JWT não fornecido ou inválido.");
+            }
+
+            String email = jwtUtil.extrairEmail(token.replace("Bearer ", ""));
+            User motorista = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Motorista não encontrado!"));
+
+            //  Configura a viagem
+            viagem.setMotorista(motorista);
+            viagem.setMotoristaEmail(motorista.getEmail());
+            viagem.setStatus(TripStatus.DISPONIVEL);
+
+            Trip viagemSalva = tripRepository.save(viagem);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(viagemSalva);
 }
+         */
+
+    }
+
