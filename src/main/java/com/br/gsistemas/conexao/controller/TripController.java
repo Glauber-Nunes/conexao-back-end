@@ -35,7 +35,7 @@ public class TripController {
     private final JwtUtil jwtUtil;
     private final PontoEncontroRepository pontoEncontroRepository;
 
-    // 🔹 Listar viagens disponíveis
+    //Listar viagens disponíveis
     @GetMapping("/disponiveis")
     public ResponseEntity<?> listarViagens(
             @RequestHeader("Authorization") String token,
@@ -51,10 +51,10 @@ public class TripController {
 
         if (usuario.getTipo().equals(UserType.PASSAGEIRO)) {
             if (origem == null && destino == null && horario == null) {
-                // 🔹 Sem filtros → retorna tudo
+                //Sem filtros retorna tudo
                 viagens = tripRepository.findByStatus(TripStatus.DISPONIVEL);
             } else {
-                // 🔹 Com filtros
+                //  Com filtros
                 viagens = tripRepository.buscarComFiltros(origem, destino, horario);
             }
         } else {
@@ -70,7 +70,7 @@ public class TripController {
 
 
 
-    // 🔹 Entrar na viagem (reduz vagas automaticamente)
+    //Entrar na viagem (reduz vagas automaticamente)
     @PostMapping("/{id}/entrar")
     public ResponseEntity<?> entrarNaViagem(
             @PathVariable("id") Long id,
@@ -115,7 +115,7 @@ public class TripController {
     }
 
 
-    // 🔹 Sair da viagem (repõe vaga se for dentro do tempo permitido)
+    // Sair da viagem (repõe vaga se for dentro do tempo permitido)
     @DeleteMapping("/{id}/sair")
     public ResponseEntity<?> sairDaViagem(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         String email = jwtUtil.extrairEmail(token.replace("Bearer ", ""));
@@ -125,12 +125,12 @@ public class TripController {
         Trip viagem = tripRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Viagem não encontrada!"));
 
-        // 🔹 Verificar se o passageiro está na viagem
+        //Verificar se o passageiro está na viagem
         if (!viagem.getPassageiros().contains(passageiro)) {
             return ResponseEntity.badRequest().body("Você não está nesta viagem!");
         }
 
-        // 🔹 Verificar se já passou 1 hora desde a entrada
+        // Verificar se já passou 1 hora desde a entrada
         LocalDateTime dataEntrada = viagem.getDataEntrada().get(email);
         if (dataEntrada != null && dataEntrada.plusHours(1).isBefore(LocalDateTime.now())) {
             return ResponseEntity.badRequest().body("Você não pode sair da viagem após 1 hora.");
@@ -144,7 +144,7 @@ public class TripController {
         return ResponseEntity.ok("Você saiu da viagem!");
     }
 
-    // 🔹 Obter detalhes da viagem
+    // Obter detalhes da viagem
     @GetMapping("/{id}")
     public ResponseEntity<?> detalhesViagem(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         if (token == null || !token.startsWith("Bearer ")) {
@@ -168,7 +168,8 @@ public class TripController {
                     ? "http://192.168.3.4:8080/conexao/api" + p.getFotoUrl()
                     : null;
 
-            System.out.println("👤 Passageiro: " + p.getNome() + " | Foto: " + fotoUrlCompleta);
+            //log
+            System.out.println("Passageiro: " + p.getNome() + " | Foto: " + fotoUrlCompleta);
 
 
             return new PassageiroDTO(p.getUsuarioId(), p.getNome(), p.getEmail(), ponto, fotoUrlCompleta);
@@ -188,13 +189,13 @@ public class TripController {
     }
 
 
-    // 🔹 Criar viagem
+    // Criar viagem
     @PostMapping("/cadastrar")
     public ResponseEntity<?> cadastrarViagem(@RequestBody Trip viagem, @RequestHeader("Authorization") String token) {
-        System.out.println("🔹 Recebendo requisição para cadastrar viagem...");
+        System.out.println("Recebendo requisição para cadastrar viagem...");
 
         if (token == null || !token.startsWith("Bearer ")) {
-            System.err.println("❌ Token JWT inválido.");
+            System.err.println("Token JWT inválido.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token JWT não fornecido ou inválido.");
         }
 
@@ -203,15 +204,15 @@ public class TripController {
         Claims claims = jwtUtil.extrairClaims(jwt);
         String email = claims.getSubject();
 
-        // 🔹 Forma correta de extrair as authorities:
+        //Forma correta de extrair as authorities:
         List<String> authorities = claims.get("authorities", List.class);
 
         if (authorities == null || !authoritiesContemRoleMotorista(claims)) {
-            System.err.println("❌ Usuário não tem ROLE_MOTORISTA.");
+            System.err.println("Usuário não tem ROLE_MOTORISTA.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Apenas motoristas podem cadastrar viagens.");
         }
 
-        System.out.println("✅ Role MOTORISTA confirmada para: " + email);
+        System.out.println("Role MOTORISTA confirmada para: " + email);
 
         User motorista = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Motorista não encontrado!"));
@@ -252,7 +253,7 @@ public class TripController {
         return ResponseEntity.ok(pontos);
     }
 
-    // 🔹 Encerrar viagem (somente motorista)
+    //Encerrar viagem (somente motorista)
     @PatchMapping("/{id}/encerrar")
     public ResponseEntity<?> encerrarViagem(@PathVariable Long id, @RequestHeader("Authorization") String token) {
         if (token == null || !token.startsWith("Bearer ")) {

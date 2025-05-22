@@ -110,7 +110,7 @@ public class AuthController {
         // Se não existir, criar a pasta de uploads
         if (!diretorio.exists()) {
             boolean criado = diretorio.mkdirs();
-            System.out.println("📂 Criando diretório uploads/: " + (criado ? "SUCESSO" : "FALHA"));
+            System.out.println("Criando diretório uploads/: " + (criado ? "SUCESSO" : "FALHA"));
         }
 
         // Se o diretório não foi criado, retorna erro

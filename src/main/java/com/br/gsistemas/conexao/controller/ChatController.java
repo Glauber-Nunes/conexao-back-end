@@ -28,7 +28,7 @@ public class ChatController {
     private final UserRepository userRepository;
 
 
-    // 🔹 Endpoint para enviar mensagem no chat da viagem
+    //Endpoint para enviar mensagem no chat da viagem
     @PostMapping("/enviar")
     public ResponseEntity<?> enviarMensagem(@RequestHeader("Authorization") String token,
                                             @RequestBody ChatMessage mensagem) {
@@ -53,7 +53,7 @@ public class ChatController {
     }
 
 
-    // 🔹 Endpoint para listar mensagens de um chat de uma viagem específica
+    //Endpoint para listar mensagens de um chat de uma viagem específica
     @GetMapping("/{viagemId}")
     public ResponseEntity<List<ChatMessage>> listarMensagens(@PathVariable Long viagemId) {
         List<ChatMessage> mensagens = chatMessageRepository.findByViagemId(viagemId);
