@@ -60,7 +60,7 @@ public class JwtUtil {
                 .getBody();
     }
 
-    //Método que valida se o token é válido
+    // Método que valida se o token é válido
     public boolean validarToken(String token, UserDetails userDetails) {
         String email = extrairEmail(token);
         return email.equals(userDetails.getUsername()) && !isTokenExpirado(token);

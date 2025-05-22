@@ -30,10 +30,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/uploads/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/viagens/cadastrar").hasAuthority("ROLE_MOTORISTA") // 🔹 Usa hasAuthority ao invés de hasRole!
+                        .requestMatchers(HttpMethod.POST, "/api/viagens/cadastrar").hasAuthority("ROLE_MOTORISTA") // Usei hasAuthority ao invés de hasRole!
                         .requestMatchers("/api/chat/**").authenticated()
 
-                        .requestMatchers("/api/viagens/**").authenticated() // 🔹 Apenas usuários autenticados podem acessar
+                        .requestMatchers("/api/viagens/**").authenticated() //Apenas usuários autenticados podem acessar
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
