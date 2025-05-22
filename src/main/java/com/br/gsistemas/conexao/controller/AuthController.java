@@ -26,7 +26,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // 🔹 Libera acesso CORS para o frontend
+@CrossOrigin(origins = "*") // Libera acesso CORS para o frontend
 public class AuthController {
 
     private final AuthService authService;

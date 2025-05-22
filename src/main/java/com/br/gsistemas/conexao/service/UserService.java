@@ -19,7 +19,6 @@ public class UserService {
             throw new RuntimeException("E-mail já cadastrado!");
         }
 
-        // Aqui poderíamos encriptar a senha antes de salvar
         return userRepository.save(user);
     }
 
