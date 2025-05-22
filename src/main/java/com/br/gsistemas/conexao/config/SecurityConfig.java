@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        System.out.println("🔹 Configuração de segurança aplicada corretamente.");
+        System.out.println("Configuração de segurança aplicada corretamente.");
         return http.build();
     }
 
