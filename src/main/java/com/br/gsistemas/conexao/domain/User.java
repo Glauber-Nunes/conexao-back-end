@@ -34,8 +34,22 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserType tipo; // MOTORISTA ou PASSAGEIRO
 
+    @NotBlank(message = "A foto é obrigatória")
+    private String fotoUrl;
+
     public User(Long id){
         this.usuarioId = id;
+    }
+
+    @Transient
+    private String pontoEncontro;
+
+    public String getPontoEncontro() {
+        return pontoEncontro;
+    }
+
+    public void setPontoEncontro(String pontoEncontro) {
+        this.pontoEncontro = pontoEncontro;
     }
 
     public User(){

@@ -4,5 +4,6 @@ public enum TripStatus {
 
     DISPONIVEL,
     LOTADO,
-    FINALIZADO
+    FINALIZADO,
+    ENCERRADA
 }

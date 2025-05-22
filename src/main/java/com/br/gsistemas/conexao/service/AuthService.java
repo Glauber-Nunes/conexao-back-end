@@ -21,7 +21,7 @@ public class AuthService {
         Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
 
         if (user.isPresent() && user.get().getSenha().equals(loginRequest.getSenha())) {
-            return jwtUtil.gerarToken(user.get().getEmail());
+            return jwtUtil.gerarToken(user.get());
         } else {
             throw new RuntimeException("Credenciais inválidas!");
         }

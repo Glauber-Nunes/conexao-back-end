@@ -29,15 +29,21 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/viagens/**").authenticated() //
-                        .requestMatchers(HttpMethod.POST, "/api/viagens/cadastrar").authenticated()  // Garante que apenas usuários autenticados acessem viagens
+                        .requestMatchers("/api/uploads/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/viagens/cadastrar").hasAuthority("ROLE_MOTORISTA") // 🔹 Usa hasAuthority ao invés de hasRole!
+                        .requestMatchers("/api/chat/**").authenticated()
+
+                        .requestMatchers("/api/viagens/**").authenticated() // 🔹 Apenas usuários autenticados podem acessar
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
+        System.out.println("🔹 Configuração de segurança aplicada corretamente.");
         return http.build();
     }
+
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {

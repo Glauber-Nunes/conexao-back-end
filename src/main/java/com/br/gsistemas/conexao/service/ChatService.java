@@ -20,8 +20,5 @@ public class ChatService {
         return chatMessageRepository.save(mensagem);
     }
 
-    public List<ChatMessage> buscarMensagens(Long remetenteId, Long destinatarioId) {
-        return chatMessageRepository.findByRemetenteAndDestinatario(
-                new User(remetenteId), new User(destinatarioId));
-    }
+
 }

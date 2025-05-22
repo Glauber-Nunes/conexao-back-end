@@ -6,7 +6,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "trips")
@@ -36,11 +38,20 @@ public class Trip {
     private String motoristaEmail;
 
     @Enumerated(EnumType.STRING)
-    private TripStatus status; // DISPONÍVEL, LOTADO, FINALIZADO
+    private TripStatus status; // DISPONÍVEL, LOTADO, FINALIZADO ETC..
 
     private Long qtdVagas;
 
     private String observacaoDinheiro;
+
+    @ElementCollection
+    private Map<String, LocalDateTime> dataEntrada = new HashMap<>();
+
+    // Novo atributo para guardar pontos de encontro por passageiro
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name = "passageiro_email")
+    @Column(name = "ponto_encontro")
+    private Map<String, String> pontosEncontro = new HashMap<>();
 
     @ManyToMany
     @JoinTable(name = "trip_passengers",
