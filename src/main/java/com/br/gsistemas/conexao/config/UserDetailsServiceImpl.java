@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         com.br.gsistemas.conexao.domain.User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
-        // 🔑 Atribui corretamente as authorities do usuário:
+        //Atribui corretamente as authorities do usuário:
         List<GrantedAuthority> authorities = Collections.singletonList(
                 new SimpleGrantedAuthority("ROLE_" + user.getTipo().name())
         );

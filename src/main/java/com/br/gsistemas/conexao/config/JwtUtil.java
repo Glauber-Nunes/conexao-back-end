@@ -24,10 +24,10 @@ public class JwtUtil {
     public String gerarToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
-                .claim("id", user.getUsuarioId()) // 🔹 Adiciona o ID do usuário ao token
-                .claim("fotoUrl", user.getFotoUrl()) // 🔹 Adiciona a URL da foto
+                .claim("id", user.getUsuarioId()) // Adiciona o ID do usuário ao token
+                .claim("fotoUrl", user.getFotoUrl()) //Adiciona a URL da foto
                 .claim("nome", user.getNome()) // Adicionando o nome no token
-                .claim("authorities", Collections.singletonList("ROLE_" + user.getTipo().name())) // 🔹 Adiciona "ROLE_MOTORISTA"
+                .claim("authorities", Collections.singletonList("ROLE_" + user.getTipo().name())) //Adiciona "ROLE_MOTORISTA"
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365 * 5)) // 5 anos
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -60,7 +60,7 @@ public class JwtUtil {
                 .getBody();
     }
 
-    // 🔹 Método que valida se o token é válido
+    //Método que valida se o token é válido
     public boolean validarToken(String token, UserDetails userDetails) {
         String email = extrairEmail(token);
         return email.equals(userDetails.getUsername()) && !isTokenExpirado(token);
